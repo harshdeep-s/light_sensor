@@ -1,0 +1,42 @@
+#include <BH1750FVI.h> 
+BH1750FVI LightSensor(BH1750FVI::k_DevModeContLowRes);
+
+int val;
+
+#include "thingProperties.h"
+
+void setup() {
+
+  Serial.begin(9600);
+  LightSensor.begin();
+  delay(1500); 
+
+  initProperties();
+  ArduinoCloud.begin(ArduinoIoTPreferredConnection);
+  setDebugMessageLevel(2);
+  ArduinoCloud.printDebugInfo();
+}
+
+void loop() {
+  ArduinoCloud.update();
+
+  val = LightSensor.GetLightIntensity();
+  if(val == 0)
+  {
+    message = "light stops to hit the terrarium, they are under dark";
+  }
+  if(val >= 1)
+  {
+    message = "light hits the terrarium, they are under sunlight";
+  }
+  
+    Serial.println(val);
+    Serial.println(message);
+    delay(1000);
+  
+}
+
+
+void onMessageChange()  {
+  // Add your code here to act upon Message change
+}
